@@ -55,14 +55,14 @@ void main()
     srand(time(0));
 
     //Datos del jugador
-    struct nave jugador = {0,0,0,0};
+    nave jugador = {0,0,0,0};
 
     //Obstáculos por nivel
-    struct objeto* objetosPorNivel[3] = 
+    objeto* objetosPorNivel[3] = 
     {
-        (struct objeto *)calloc(3, sizeof(struct objeto*)),
-        (struct objeto *)calloc(2, sizeof(struct objeto*)),
-        (struct objeto *)calloc(2, sizeof(struct objeto*))
+        (objeto*)calloc(3, sizeof(objeto)),
+        (objeto*)calloc(2, sizeof(objeto)),
+        (objeto*)calloc(2, sizeof(objeto))
     };
 
     //Crear objetos nivel 1
@@ -88,9 +88,9 @@ void main()
 
     //Crear objetos nivel 3
 
-    int distancia, contdecisiones, nivel = 0;
-    short int max_objetos = 3;
-    struct objeto *objeto_actual;
+    int distancia, contdecisiones;
+    short int max_objetos = 3, nivel = 0;
+     objeto *objeto_actual;
     char op;
     const int MAXVIDAS[4] = {2000, 1900, 1500, 1000}, MAXMISILES[4] = {8000, 7800, 7400, 6900};
     const int MAXDIST[3] = {10000, 8000, 6000}, MAXVEL[3][2]={{9,12},{9,20},{13,28}};
@@ -140,6 +140,7 @@ void main()
         //Valores iniciales de vidas, velocidad y misiles
         jugador.capsvid = MAXVIDAS[nivel];
         jugador.misiles = MAXMISILES[nivel];
+        jugador.velocidad = MAXVEL[nivel][1] * 1000;
         max_objetos = nivel == 0 ? 3 : 2;
         contdecisiones = 1;
 
@@ -177,7 +178,7 @@ void main()
         while(jugador.misiles >= MAXMISILES[nivel + 1] && jugador.capsvid >= MAXVIDAS[nivel + 1] && contdecisiones <= 7)
         {
             //Si ya avanzó 100 km, variar la velocidad aleatoriamente
-            if (jugador.dist%100 == 0)
+            if (jugador.dist >= 100 == 0)
                 jugador.velocidad=(rand() % MAXVEL[nivel][0] + MAXVEL[nivel][1]) * 1000;
 
             //Generar una distancia

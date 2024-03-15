@@ -1,14 +1,14 @@
 #ifndef ESTRUCTURASPROY_H
 #define ESTRUCTURASPROY_H
-struct nave
+typedef struct
 {
     int capsvid;
     int misiles;
     int velocidad;
     int dist;
-};
+} nave;
 
-struct objeto
+typedef struct
 {
     short int esObstaculo;
     char* nombre;
@@ -17,5 +17,5 @@ struct objeto
     int misilesIncorrecto;
     int vidasCorrecto;
     int vidasIncorrecto;
-};
+} objeto;
 #endif
