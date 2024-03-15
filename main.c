@@ -74,26 +74,53 @@ void main()
 
     objetosPorNivel[0][1].esObstaculo = 1;
     objetosPorNivel[0][1].nombre = BRIGHT_BLUE "PLANETA SIN VIDA";
-    objetosPorNivel[0][1].maxDist = 10000;
+    objetosPorNivel[0][1].maxDist = 8000;
     objetosPorNivel[0][1].misilesCorrecto = 50;
     objetosPorNivel[0][1].misilesIncorrecto = 25;
-    objetosPorNivel[0][1].vidasCorrecto = 5;
-    objetosPorNivel[0][1].vidasIncorrecto = 3;
+    objetosPorNivel[0][1].vidasCorrecto = 25;
+    objetosPorNivel[0][1].vidasIncorrecto = 15;
 
     objetosPorNivel[0][2].esObstaculo = 1;
     objetosPorNivel[0][2].nombre = BRIGHT_GREEN "PLANETA CON VIDA";
     objetosPorNivel[0][2].maxDist = 10000;
     
     //Crear objetos nivel 2
+    objetosPorNivel[1][0].esObstaculo = 0;
+    objetosPorNivel[1][0].nombre = BRIGHT_RED "OBJETO DE INTERES";
+    objetosPorNivel[1][0].maxDist = 4000;
+    objetosPorNivel[1][0].vidasCorrecto = 10;
+    objetosPorNivel[1][0].vidasIncorrecto = 7;
+
+    objetosPorNivel[1][1].esObstaculo = 1;
+    objetosPorNivel[1][1].nombre = BLUE "ASTEROIDE";
+    objetosPorNivel[1][1].maxDist = 6000;
+    objetosPorNivel[1][1].misilesCorrecto = 60;
+    objetosPorNivel[1][1].misilesIncorrecto = 40;
+    objetosPorNivel[1][1].vidasCorrecto = 30;
+    objetosPorNivel[1][1].vidasIncorrecto = 20;
 
     //Crear objetos nivel 3
+    objetosPorNivel[2][0].esObstaculo = 0;
+    objetosPorNivel[2][0].nombre = BRIGHT_RED "OBJETO DE INTERES";
+    objetosPorNivel[2][0].maxDist = 2000;
+    objetosPorNivel[2][0].vidasCorrecto = 15;
+    objetosPorNivel[2][0].vidasIncorrecto = 35;
 
-    int distancia, contdecisiones;
-    short int max_objetos = 3, nivel = 0;
-     objeto *objeto_actual;
+    objetosPorNivel[2][1].esObstaculo = 1;
+    objetosPorNivel[2][1].nombre = BRIGHT_BLUE "HOYO NEGRO";
+    objetosPorNivel[2][1].maxDist = 4000;
+    objetosPorNivel[2][1].misilesCorrecto = 80;
+    objetosPorNivel[2][1].misilesIncorrecto = 50;
+    objetosPorNivel[2][1].vidasCorrecto = 35;
+    objetosPorNivel[2][1].vidasIncorrecto = 30;
+
+    short int max_objetos = 3, nivel = 0, contdecisiones = 0;
+    int distancia,supera=0;
+    objeto *objeto_actual;
     char op;
     const int MAXVIDAS[4] = {2000, 1900, 1500, 1000}, MAXMISILES[4] = {8000, 7800, 7400, 6900};
     const int MAXDIST[3] = {10000, 8000, 6000}, MAXVEL[3][2]={{9,12},{9,20},{13,28}};
+    int dist_obstaculos[7];
 
     //Pantalla principal
     printf(" ______     ______     __   __   ______           __    __     ______     ______     ______\n");    
@@ -141,8 +168,24 @@ void main()
         jugador.capsvid = MAXVIDAS[nivel];
         jugador.misiles = MAXMISILES[nivel];
         jugador.velocidad = MAXVEL[nivel][1] * 1000;
+        jugador.dist = 0;
         max_objetos = nivel == 0 ? 3 : 2;
         contdecisiones = 1;
+        op = 'c';
+        supera=0;
+
+        //Generar 7 distancias
+        for(int i = 0; i < 7; i++)
+        {
+            if(i == 0)
+            {
+                dist_obstaculos[0] = (rand()%8) + 5;
+            }
+            else
+            {
+                dist_obstaculos[i] = (rand()%8) + (dist_obstaculos[i-1]) + 1;
+            }
+        }
 
         //Instrucciones de nivel
         printf("NIVEL %d\n", nivel + 1);
@@ -178,11 +221,19 @@ void main()
         while(jugador.misiles >= MAXMISILES[nivel + 1] && jugador.capsvid >= MAXVIDAS[nivel + 1] && contdecisiones <= 7)
         {
             //Si ya avanzó 100 km, variar la velocidad aleatoriamente
-            if (jugador.dist >= 100 == 0)
+            if (jugador.dist - supera >= 100)
+            {
+                supera=jugador.dist; //Aqui va guardando la distancia 
                 jugador.velocidad=(rand() % MAXVEL[nivel][0] + MAXVEL[nivel][1]) * 1000;
-
-            //Generar una distancia
-            distancia = (rand() % 15 + 1) * 1000;
+            }
+            
+            //Calcular distancia
+            distancia = (dist_obstaculos[contdecisiones - 1])*1000 - jugador.dist;
+            if(distancia <= 0)
+            {
+                jugador.capsvid = 0;
+                continue;
+            }
 
             //Display
             printf(MAGENTA "CAPS. VIDA: %d  ", jugador.capsvid);
@@ -192,7 +243,8 @@ void main()
             printf(RESET);	
 
             //Generar objeto al azar
-            objeto_actual = &objetosPorNivel[nivel][rand()%max_objetos];
+            if(op == 'E' || op == 'e' || op == 'c' || op == 'C' || op == 'D' || op == 'd')
+                objeto_actual = &objetosPorNivel[nivel][rand()%max_objetos];
 
             //Mostrar objeto generado
             printf("Un %s" WHITE " se encuentra a %d km de distancia\n", objeto_actual->nombre, distancia);
@@ -204,11 +256,14 @@ void main()
                 do
                 {
                     printf("Que desea hacer?\n");
-                    printf("Presione[E] para esquivar o [D] para destruir\n");
+                    printf("Presione [S] para seguir adelante, [E] para esquivar o [D] para destruir\n");
                     op = getch();
 
                     switch (op)
                     {
+                        case 's': case 'S':
+                            jugador.dist += 25;
+                            break;
                         //Evitar un obstáculo
                         case 'E': case 'e':
                             if (distancia > objeto_actual->maxDist - 2000)
@@ -218,6 +273,8 @@ void main()
                                 printf("Se ha estrellado con el %s\n", objeto_actual->nombre);
                                 jugador.capsvid = 0;
                             }
+                            jugador.dist += distancia;
+                            contdecisiones++;
                             break;
                         //Destruir un obstáculo
                         case 'D': case 'd': 
@@ -247,13 +304,15 @@ void main()
                                     jugador.misiles -= objeto_actual->misilesIncorrecto;
                                 }
                             }
+                            contdecisiones++;
+                            jugador.dist += distancia;
                             break;
                         default:
                             printf("No presiono una opcion correcta.\n");
                             break;
                         }
                     }
-                    while (op != 'e' && op != 'E' && op != 'D' && op != 'd');
+                    while (op != 'e' && op != 'E' && op != 'D' && op != 'd' && op != 's' && op != 'S');
             }
             //Si se generó un objeto de interés
             else
@@ -262,7 +321,7 @@ void main()
                 do
                 {
                     printf("Que desea hacer.\n");
-                    printf("Presione [C] para capturar y [E] para esquivar\n");
+                    printf("Presione [C] para capturar y [S] para seguir adelante\n");
                     op = getch();
 
                     switch (op)
@@ -280,17 +339,18 @@ void main()
                                 jugador.capsvid -= objeto_actual->vidasIncorrecto;
                             }
                             break;
-                        case 'e': case 'E':
-                            printf("Esquivaste la capsula\n");
+                            contdecisiones++;
+                            jugador.dist += distancia;
+                        case 's': case 'S':
+                            jugador.dist += 25;
                             break;
                         default:
                             printf("No presiono una opcion correcta.\n");
                             break;
                         }
-                    } while (op != 'e' && op != 'E' && op != 'C' && op != 'c');
+                    } while (op != 's' && op != 'S' && op != 'C' && op != 'c' && op != 's' && op != 'S');
             }
 
-            contdecisiones++;
             printf(WHITE "Presiona enter para continuar...");
             getch();
             printf("\e[1;1H\e[2J");
