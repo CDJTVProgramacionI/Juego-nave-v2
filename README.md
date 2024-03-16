@@ -30,7 +30,7 @@ Además, aparecerán objetos de interés. Por cada objeto capturado (siempre y c
 La nave puede destruir hoyos negros si la distancia entre la nave y el hoyo negro es igual o menor a 4000 km, y la velocidad de la nave es de 28000 km/h o más. Por cada hoyo negro destruido, la nave pierde 35 cápsulas de vida y 80 misiles. Intentar destruir un hoyo negro sin cumplir los requisitos necesarios resulta en una penalización de 30 cápsulas de vida y 50 misiles.
 La nave comienza con 1500 cápsulas de vida y 7400 misiles. Este nivel se supera si la nave queda con al menos 6900 misiles y al menos 1000 cápsulas de vida. El jugador pierde si la nave tiene menos de 6900 misiles o menos de 1000 cápsulas de vida.
 
-##Mecánica de velocidad: 
+## Mecánica de velocidad: 
 La velocidad cambiará cada 100 km recorridos.
 **Nivel 1:** La velocidad inicial de la nave se establece en 12,000 km/h. Por cada 100 km recorridos, la velocidad puede variar en el rango de 12,000 a < 20,000 km/h.
 **Nivel 2:** La velocidad inicial de la nave se establece en 20,000 km/h. Por cada 100 km recorridos, la velocidad puede variar en el rango de 20,000 a < 28,000 km/h.
