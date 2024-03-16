@@ -74,7 +74,7 @@ void main()
 
     objetosPorNivel[0][1].esObstaculo = 1;
     objetosPorNivel[0][1].nombre = BRIGHT_BLUE "PLANETA SIN VIDA";
-    objetosPorNivel[0][1].maxDist = 8000;
+    objetosPorNivel[0][1].maxDist = 10000;
     objetosPorNivel[0][1].misilesCorrecto = 50;
     objetosPorNivel[0][1].misilesIncorrecto = 25;
     objetosPorNivel[0][1].vidasCorrecto = 25;
@@ -93,7 +93,7 @@ void main()
 
     objetosPorNivel[1][1].esObstaculo = 1;
     objetosPorNivel[1][1].nombre = BLUE "ASTEROIDE";
-    objetosPorNivel[1][1].maxDist = 6000;
+    objetosPorNivel[1][1].maxDist = 8000;
     objetosPorNivel[1][1].misilesCorrecto = 60;
     objetosPorNivel[1][1].misilesIncorrecto = 40;
     objetosPorNivel[1][1].vidasCorrecto = 30;
@@ -107,8 +107,8 @@ void main()
     objetosPorNivel[2][0].vidasIncorrecto = 35;
 
     objetosPorNivel[2][1].esObstaculo = 1;
-    objetosPorNivel[2][1].nombre = BRIGHT_BLUE "HOYO NEGRO";
-    objetosPorNivel[2][1].maxDist = 4000;
+    objetosPorNivel[2][1].nombre = PURPLE "HOYO NEGRO";
+    objetosPorNivel[2][1].maxDist = 6000;
     objetosPorNivel[2][1].misilesCorrecto = 80;
     objetosPorNivel[2][1].misilesIncorrecto = 50;
     objetosPorNivel[2][1].vidasCorrecto = 35;
@@ -119,7 +119,7 @@ void main()
     objeto *objeto_actual;
     char op;
     const int MAXVIDAS[4] = {2000, 1900, 1500, 1000}, MAXMISILES[4] = {8000, 7800, 7400, 6900};
-    const int MAXDIST[3] = {10000, 8000, 6000}, MAXVEL[3][2]={{9,12},{9,20},{13,28}};
+    const int MAXVEL[3][2]={{9,12},{9,20},{13,28}};
     int dist_obstaculos[7];
 
     //Pantalla principal
@@ -205,12 +205,12 @@ void main()
         }
 
         printf(WHITE "Iniciaras con %d caps. de vida y %d misiles\n", MAXVIDAS[nivel], MAXMISILES[nivel]);
-        printf("Si la distancia entre la nave y un obstaculo esta entre %d y %d km se DEBE evadir el obstaculo\n", MAXDIST[nivel] - 2000, MAXDIST[nivel]);
-        printf("Si la distancia entre un obstaculo y la nave es menor a %d km la nave choca y pierde el juego\n", MAXDIST[nivel] - 2000);
-        printf("Si la distancia entre la nave y el obstaculo es mayor a %d km la nave sigue su camino\n", MAXDIST[nivel]);
-        printf("Si la distancia entre nave y objeto de interes es menor o igual a %d km se ganan %d caps. de vida (No importa la velocidad)\n", MAXDIST[nivel] - 4000, objetosPorNivel[nivel][0].vidasCorrecto);
+        printf("Si la distancia entre la nave y un obstaculo esta entre %d y %d km se DEBE evadir el obstaculo\n", objetosPorNivel[nivel][1].maxDist - 2000, objetosPorNivel[nivel][1].maxDist);
+        printf("Si la distancia entre un obstaculo y la nave es menor a %d km la nave choca y pierde el juego\n", objetosPorNivel[nivel][1].maxDist - 2000);
+        printf("Si la distancia entre la nave y el obstaculo es mayor a %d km la nave sigue su camino\n", objetosPorNivel[nivel][1].maxDist);
+        printf("Si la distancia entre nave y objeto de interes es menor o igual a %d km se ganan %d caps. de vida (No importa la velocidad)\n", objetosPorNivel[nivel][0].maxDist, objetosPorNivel[nivel][0].vidasCorrecto);
         printf("    - Si no se cumplen las condiciones se pierden %d capsulas de vida\n", objetosPorNivel[nivel][0].vidasIncorrecto);
-        printf("La nave puede destruir obstaculos si la distancia es igual o menor a %d km\n", MAXDIST[nivel] - 2000);
+        printf("La nave puede destruir obstaculos si la distancia es igual o menor a %d km\n", objetosPorNivel[nivel][1].maxDist - 2000);
         printf("    - Por cada obstaculo destruido se pierden %d caps. de vida y %d misiles\n", objetosPorNivel[nivel][1].vidasCorrecto, objetosPorNivel[nivel][1].misilesCorrecto);
         printf("    - Al intentar destruir un obstaculo sin respetar las condiciones se pierden %d caps. y %d misiles\n", objetosPorNivel[nivel][1].vidasIncorrecto, objetosPorNivel[nivel][1].misilesIncorrecto);
         printf("Pierdes si tienes menos de %d misiles o menos de %d caps. de vida\n", MAXMISILES[nivel + 1], MAXVIDAS[nivel + 1]);
@@ -229,11 +229,6 @@ void main()
             
             //Calcular distancia
             distancia = (dist_obstaculos[contdecisiones - 1])*1000 - jugador.dist;
-            if(distancia <= 0)
-            {
-                jugador.capsvid = 0;
-                continue;
-            }
 
             //Display
             printf(MAGENTA "CAPS. VIDA: %d  ", jugador.capsvid);
@@ -262,7 +257,13 @@ void main()
                     switch (op)
                     {
                         case 's': case 'S':
-                            jugador.dist += 25;
+                            if(distancia <= objeto_actual->maxDist - 2000 || (distancia <=objeto_actual->maxDist && jugador.velocidad >= (MAXVEL[nivel][1]*1000)))
+                            {
+                                jugador.capsvid = 0;
+                                printf("Se ha estrellado con el %s\n", objeto_actual->nombre);
+                            }
+                            else
+                                jugador.dist += 25;
                             break;
                         //Evitar un obstáculo
                         case 'E': case 'e':
@@ -292,7 +293,7 @@ void main()
                             }
                             else
                             {
-                                if(distancia > (objeto_actual->maxDist - 2000) && distancia <= MAXDIST[nivel] && jugador.velocidad >= (MAXVEL[nivel][1] * 1000))
+                                if(distancia > (objeto_actual->maxDist - 2000) && distancia <= objeto_actual->maxDist && jugador.velocidad >= (MAXVEL[nivel][1] * 1000))
                                 {
                                     printf("Debiste haber esquivado\n");
                                     jugador.capsvid = 0;
@@ -342,6 +343,13 @@ void main()
                             contdecisiones++;
                             jugador.dist += distancia;
                         case 's': case 'S':
+                            //Se saltó la capsula por completo
+                            if(distancia <= 25)
+                            {
+                                //Ir al siguiente obstáculo
+                                op = 'c';
+                                contdecisiones++;
+                            }
                             jugador.dist += 25;
                             break;
                         default:
