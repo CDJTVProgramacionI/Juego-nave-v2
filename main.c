@@ -257,7 +257,7 @@ void main()
                     switch (op)
                     {
                         case 's': case 'S':
-                            if(distancia <= objeto_actual->maxDist - 2000 || (distancia <=objeto_actual->maxDist && jugador.velocidad >= (MAXVEL[nivel][1]*1000)))
+                            if(distancia <= objeto_actual->maxDist - 2000 || (distancia < objeto_actual->maxDist && jugador.velocidad >= (MAXVEL[nivel][1]*1000)))
                             {
                                 jugador.capsvid = 0;
                                 printf("Se ha estrellado con el %s\n", objeto_actual->nombre);
@@ -293,7 +293,7 @@ void main()
                             }
                             else
                             {
-                                if(distancia > (objeto_actual->maxDist - 2000) && distancia <= objeto_actual->maxDist && jugador.velocidad >= (MAXVEL[nivel][1] * 1000))
+                                if(distancia > (objeto_actual->maxDist - 2000) && distancia < objeto_actual->maxDist && jugador.velocidad >= (MAXVEL[nivel][1] * 1000))
                                 {
                                     printf("Debiste haber esquivado\n");
                                     jugador.capsvid = 0;
@@ -339,9 +339,9 @@ void main()
                                 printf("Objeto no capturado\n");
                                 jugador.capsvid -= objeto_actual->vidasIncorrecto;
                             }
-                            break;
                             contdecisiones++;
                             jugador.dist += distancia;
+                            break;
                         case 's': case 'S':
                             //Se saltó la capsula por completo
                             if(distancia <= 25)
