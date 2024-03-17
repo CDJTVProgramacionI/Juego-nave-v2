@@ -174,8 +174,6 @@ void main()
         op = 'c';
         supera=0;
 
-        printf("%d\n", max_objetos);
-
         //Generar 7 distancias
         for(int i = 0; i < 7; i++)
         {
