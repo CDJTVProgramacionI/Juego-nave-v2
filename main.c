@@ -169,10 +169,12 @@ void main()
         jugador.misiles = MAXMISILES[nivel];
         jugador.velocidad = MAXVEL[nivel][1] * 1000;
         jugador.dist = 0;
-        max_objetos = nivel == 0 ? 3 : 2;
+        max_objetos = (nivel == 0) ? 3 : 2;
         contdecisiones = 1;
         op = 'c';
         supera=0;
+
+        printf("%d\n", max_objetos);
 
         //Generar 7 distancias
         for(int i = 0; i < 7; i++)
@@ -218,7 +220,7 @@ void main()
         getch();
         printf("\e[1;1H\e[2J");
 
-        while(jugador.misiles >= MAXMISILES[nivel + 1] && jugador.capsvid >= MAXVIDAS[nivel + 1] && contdecisiones <= 7)
+        while(jugador.misiles >= MAXMISILES[nivel + 1] && jugador.capsvid >= MAXVIDAS[nivel + 1] && contdecisiones <= (nivel==0?4:7))
         {
             //Si ya avanzó 100 km, variar la velocidad aleatoriamente
             if (jugador.dist - supera >= 100)
@@ -267,7 +269,7 @@ void main()
                             break;
                         //Evitar un obstáculo
                         case 'E': case 'e':
-                            if (distancia > objeto_actual->maxDist - 2000)
+                            if (distancia >= objeto_actual->maxDist - 2000)
                                 printf("Se esquivo el %s\n", objeto_actual->nombre);
                             else
                             {
@@ -367,13 +369,13 @@ void main()
         //Compara la cantidad de misiles y de capsulas restantes y define si pierdes o ganas
         if (jugador.misiles >= MAXMISILES[nivel + 1] && jugador.capsvid >= MAXVIDAS[nivel + 1])
         {
+            free(objetosPorNivel[nivel]);
             nivel++;
             op = 's';
             printf("Ganaste el nivel %d\n", nivel);
             printf(WHITE "Presiona enter para continuar...");
             getch();
             printf("\e[1;1H\e[2J");
-            free(objetosPorNivel[nivel]);
         }
         else 
         {
